@@ -4,7 +4,7 @@ export const addTodo = async (request, response) => {
     try {
         const newTodo = await Todo.create({
             data: request.body.data,
-            dates: request.body.dates,
+            desc: request.body.desc,
             createdAt: Date.now()
         })
 
@@ -43,21 +43,17 @@ export const toggleTodoDone = async (request, response) => {
     }
 }
 
-export const updateTodo = async (request, response) => {
+export const updateTodo = async (req, res) => {
+    let user = req.body;
+    const edituser = new Todo(user);
     try {
-        await Todo.findOneAndUpdate(
-            { _id: request.params.id },
-            { data: request.body.data },
-            { dates: request.body.dates }
-        )
-
-        const todo = await Todo.findById(request.params.id);
-      
-
-        return response.status(200).json(todo);
-    } catch (error) {
-        return response.status(500).json(error.message);
-    }
+   await Todo.updateOne({_id:req.params.id},req.body,edituser);
+  
+      res.status(201).json(edituser);
+  
+  } catch (error) {
+      res.status(422).json(error);
+  }
 }
 
 export const deleteTodo = async (request, response) => {
